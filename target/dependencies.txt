@@ -1,0 +1,18 @@
+digraph "CS342Fall2020:projectThreeServer:jar:0.0.1-SNAPSHOT" { 
+	"CS342Fall2020:projectThreeServer:jar:0.0.1-SNAPSHOT" -> "org.junit.jupiter:junit-jupiter:jar:5.6.2:test" ; 
+	"CS342Fall2020:projectThreeServer:jar:0.0.1-SNAPSHOT" -> "org.openjfx:javafx-controls:jar:12.0.1:compile" ; 
+	"CS342Fall2020:projectThreeServer:jar:0.0.1-SNAPSHOT" -> "org.openjfx:javafx-fxml:jar:12:compile" ; 
+	"org.junit.jupiter:junit-jupiter:jar:5.6.2:test" -> "org.junit.jupiter:junit-jupiter-api:jar:5.6.2:test" ; 
+	"org.junit.jupiter:junit-jupiter:jar:5.6.2:test" -> "org.junit.jupiter:junit-jupiter-params:jar:5.6.2:test" ; 
+	"org.junit.jupiter:junit-jupiter:jar:5.6.2:test" -> "org.junit.jupiter:junit-jupiter-engine:jar:5.6.2:test" ; 
+	"org.junit.jupiter:junit-jupiter-api:jar:5.6.2:test" -> "org.apiguardian:apiguardian-api:jar:1.1.0:test" ; 
+	"org.junit.jupiter:junit-jupiter-api:jar:5.6.2:test" -> "org.opentest4j:opentest4j:jar:1.2.0:test" ; 
+	"org.junit.jupiter:junit-jupiter-api:jar:5.6.2:test" -> "org.junit.platform:junit-platform-commons:jar:1.6.2:test" ; 
+	"org.junit.jupiter:junit-jupiter-engine:jar:5.6.2:test" -> "org.junit.platform:junit-platform-engine:jar:1.6.2:test" ; 
+	"org.openjfx:javafx-controls:jar:12.0.1:compile" -> "org.openjfx:javafx-controls:jar:mac:12.0.1:compile" ; 
+	"org.openjfx:javafx-controls:jar:12.0.1:compile" -> "org.openjfx:javafx-graphics:jar:12.0.1:compile" ; 
+	"org.openjfx:javafx-graphics:jar:12.0.1:compile" -> "org.openjfx:javafx-graphics:jar:mac:12.0.1:compile" ; 
+	"org.openjfx:javafx-graphics:jar:12.0.1:compile" -> "org.openjfx:javafx-base:jar:12.0.1:compile" ; 
+	"org.openjfx:javafx-base:jar:12.0.1:compile" -> "org.openjfx:javafx-base:jar:mac:12.0.1:compile" ; 
+	"org.openjfx:javafx-fxml:jar:12:compile" -> "org.openjfx:javafx-fxml:jar:mac:12:compile" ; 
+ } 
