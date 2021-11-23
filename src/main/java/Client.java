@@ -37,7 +37,7 @@ public class Client extends Thread{
 		
 		while(true) {
 			try {
-				clientInfo = (BaccaratInfo)in.readObject(); //NUL POINTER EXCEPTION HERE!!!!!!!!
+				clientInfo = (BaccaratInfo)in.readObject(); //NUL POINTER EXCEPTION HERE!!!!!!!! && EOF
 				callback.accept(clientInfo); //read in object and convert to info class object 
 			}
 			catch(Exception e) {
@@ -52,6 +52,10 @@ public class Client extends Thread{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public BaccaratInfo getInfo() {
+		return this.clientInfo;
 	}
 
 

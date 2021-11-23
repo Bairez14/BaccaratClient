@@ -1,6 +1,7 @@
-
 import java.util.HashMap;
 import javax.crypto.spec.IvParameterSpec;
+import javax.xml.namespace.QName;
+
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -18,6 +19,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent; //use radial button
 
@@ -26,8 +29,9 @@ public class GuiClient extends Application {
 	public int port;
 	public String address;
 	TextField ipTextField, portTextField, betAmount;
+	Text total;
 	HashMap<String, Scene> sceneMap;
-	Button clientChoice, betButton;
+	Button clientChoice, betButton, playAgain, exitClient;
 	RadioButton playerButton, bankerButton, drawButton;
 	ToggleGroup choiceButtons;
 	GridPane grid;
@@ -37,7 +41,7 @@ public class GuiClient extends Application {
 	Scene startScene;
 	BorderPane startPane, infoPane;
 	Client clientConnection;
-	ListView<String> listItems, listItems2, playerView, bankerView;
+	ListView<String> listItems, listItems2, playerView, bankerView, resultsView;
 	BaccaratInfo clientInfo = new BaccaratInfo();
 	EventHandler<ActionEvent> connectToServer, gameHandler;
 	
@@ -61,7 +65,7 @@ public class GuiClient extends Application {
 		ipTextField = new TextField();
 		ipTextField.setPromptText("IP address");
 
-		buttonBox = new HBox(10, clientChoice, ipTextField, portTextField);
+		buttonBox = new HBox(2, clientChoice, ipTextField, portTextField);
 		//choiceBox = new VBox(10, playerButton, bankerButton, drawButton);
 		startPane = new BorderPane();
 		startPane.setPadding(new Insets(200));
@@ -111,33 +115,39 @@ public class GuiClient extends Application {
 	
 	// PLaying scene showing cards dealt
 	public Scene getScene(Stage primaryStage) {
-		BorderPane gamePane = new BorderPane(); 
+		BorderPane gamePane = new BorderPane();
+		total = new Text("Earnings ");
+		total.setFill(Color.WHITE);
 		playerView = new ListView<String>();
 		bankerView = new ListView<String>();
+		resultsView = new ListView<String>();
 		betAmount = new TextField();
+		exitClient = new Button("EXIT");
 		betAmount.setPromptText("Enter betting amount:");
-		// look up radio buttons, only selects one
-		betButton = new Button("Bet");
+		betButton = new Button("Place Bet");
 		choiceButtons = new ToggleGroup();
 		playerButton = new RadioButton("Player");
+		playerButton.setStyle("-fx-background-color: White;");
 		bankerButton = new RadioButton("Banker");
+		bankerButton.setStyle("-fx-background-color: White;");
 		drawButton = new RadioButton("Draw");
+		drawButton.setStyle("-fx-background-color: White;");
 		playerButton.setToggleGroup(choiceButtons);
 		bankerButton.setToggleGroup(choiceButtons);
 		drawButton.setToggleGroup(choiceButtons);
 		gamePane.setPadding(new Insets(40));
 		playerView.setPrefWidth(300);
 		bankerView.setPrefHeight(300);
-		HBox gameBox = new HBox(20, playerButton, bankerButton, drawButton, betAmount, betButton);
-		HBox infoScreen = new HBox(100, playerView, bankerView);
+		HBox gameBox = new HBox(20, playerButton, bankerButton, drawButton, betAmount, betButton, exitClient, total);
+		HBox infoScreen = new HBox(40, playerView,resultsView, bankerView);
 
 		gamePane.setTop(gameBox);
 		gamePane.setCenter(infoScreen);
 
+		//choiceButtons.setStyle("-fx-selected-color: White;"  + "-fx-unselected-color: White;");
+
 		Scene gameScene = new Scene(gamePane, 800, 800);
 		gameScene.getRoot().setStyle("-fx-font-family: 'serif';" + "-fx-background-color: Blue");
-
-		//sceneMap.put("game", gameScene);
 
 		// need to start a baccaratinfo containing all the info
 		gameHandler = new EventHandler<ActionEvent> () {
@@ -148,9 +158,34 @@ public class GuiClient extends Application {
 				clientInfo.betOnWho = selected.getText();
 				clientInfo.currentBet = Integer.parseInt(betAmount.getText());
 				clientConnection.send(clientInfo);
+				clientInfo = clientConnection.getInfo();
+				playerView.getItems().add("Card 1: " + clientInfo.pCardVals.get(0)); //Null pointer exception???
+				playerView.getItems().add("Card 2: " + clientInfo.pCardVals.get(1));
+				if (clientInfo.pCardVals.size() == 3) {
+					playerView.getItems().add("Player drew another card!");
+					playerView.getItems().add("Card 3: " + clientInfo.pCardVals.get(2));
+				}
+				playerView.getItems().add("    ");
+				
+				bankerView.getItems().add("Card 1: " + clientInfo.bCardVals.get(0));
+				bankerView.getItems().add("Card 2: " + clientInfo.bCardVals.get(1));
+				if (clientInfo.bCardVals.size() == 3) {
+					bankerView.getItems().add("Banker drew another card!");
+					bankerView.getItems().add("Card 3: " + clientInfo.bCardVals.get(2));
+				}
+				bankerView.getItems().add("      ");
+
+				resultsView.getItems().add("Player points: " + Integer.toString(clientInfo.pPoints));
+				resultsView.getItems().add("Banker points: " + Integer.toString(clientInfo.bPoints));
+				resultsView.getItems().add("");
+				double sum =+ clientInfo.totalEarnings;
+				total.setText("Earnings: " + sum);
+				//betButton.setDisable(false);
 			}
 		};
 
+		
+		exitClient.setOnAction(e -> primaryStage.close());
 		betButton.setOnAction(gameHandler);
 		return gameScene;
 	}
