@@ -37,8 +37,8 @@ public class Client extends Thread{
 		
 		while(true) {
 			try {
-				clientInfo = (BaccaratInfo)in.readObject();
-				callback.accept(clientInfo); //read in object and convert to info class object ack.accept(message);
+				clientInfo = (BaccaratInfo)in.readObject(); //NUL POINTER EXCEPTION HERE!!!!!!!!
+				callback.accept(clientInfo); //read in object and convert to info class object 
 			}
 			catch(Exception e) {
 				e.printStackTrace();

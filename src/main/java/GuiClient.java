@@ -23,13 +23,6 @@ import javafx.stage.WindowEvent; //use radial button
 
 public class GuiClient extends Application {
 	
-	// QUESTIONS
-	// what else needs to be impplemented in Client and Server classes?
-	// How to connect server and client? -- have print statements that tell if we are connected
-	// instantiate a final variable for port number???
-	// How is the serverGUI supposed to look?
-	// do we need separate folder for server and client??(how are ther they communicating together being in separate folders)
-
 	public int port;
 	public String address;
 	TextField ipTextField, portTextField, betAmount;
@@ -62,7 +55,7 @@ public class GuiClient extends Application {
 		listItems = new ListView<String>();
 		listItems2 = new ListView<String>();
 
-		clientChoice = new Button("Press once done adding IP and port number");
+		clientChoice = new Button("Connect");
 		portTextField = new TextField();
 		portTextField.setPromptText("port number");
 		ipTextField = new TextField();
@@ -71,7 +64,7 @@ public class GuiClient extends Application {
 		buttonBox = new HBox(10, clientChoice, ipTextField, portTextField);
 		//choiceBox = new VBox(10, playerButton, bankerButton, drawButton);
 		startPane = new BorderPane();
-		//startPane.setPadding(new Insets(70));
+		startPane.setPadding(new Insets(200));
 		startPane.setCenter(buttonBox);
 		//startPane.setRight(choiceBox);
 
@@ -96,23 +89,8 @@ public class GuiClient extends Application {
 			};	
 		};
 
-		// clientChoice.setOnAction(e -> {
-		// 	//clientChoice.setPressed(true);
-		// 	address = ipTextField.getText();
-		// 	port = Integer.parseInt(portTextField.getText());
-		// 	primaryStage.setScene(sceneMap.get("gameScene")); //changes to game scene when button to connect is pressed
-
-		// 	clientConnection = new Client(data -> {
-		// 		Platform.runLater(() -> {
-		// 			listItems2.getItems().add(data.toString());
-		// 		});
-		// 	}, port, address);
-		// 	System.out.println(address + "  " + port);
-		// 	clientConnection.start();
-		// });
-
-
 		startScene = new Scene(startPane, 800, 800);
+		startScene.getRoot().setStyle("-fx-font-family: 'serif';" + "-fx-background-color: Blue");
 
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
@@ -131,6 +109,7 @@ public class GuiClient extends Application {
 
 	}
 	
+	// PLaying scene showing cards dealt
 	public Scene getScene(Stage primaryStage) {
 		BorderPane gamePane = new BorderPane(); 
 		playerView = new ListView<String>();
@@ -146,27 +125,33 @@ public class GuiClient extends Application {
 		playerButton.setToggleGroup(choiceButtons);
 		bankerButton.setToggleGroup(choiceButtons);
 		drawButton.setToggleGroup(choiceButtons);
-		HBox gameBox = new HBox(10, playerButton, bankerButton, drawButton, betAmount, betButton);
-		VBox infoScreen = new VBox(10, playerView, bankerView);
+		gamePane.setPadding(new Insets(40));
+		playerView.setPrefWidth(300);
+		bankerView.setPrefHeight(300);
+		HBox gameBox = new HBox(20, playerButton, bankerButton, drawButton, betAmount, betButton);
+		HBox infoScreen = new HBox(100, playerView, bankerView);
 
 		gamePane.setTop(gameBox);
-		gamePane.setBottom(infoScreen);
+		gamePane.setCenter(infoScreen);
 
 		Scene gameScene = new Scene(gamePane, 800, 800);
+		gameScene.getRoot().setStyle("-fx-font-family: 'serif';" + "-fx-background-color: Blue");
+
 		//sceneMap.put("game", gameScene);
 
 		// need to start a baccaratinfo containing all the info
 		gameHandler = new EventHandler<ActionEvent> () {
+			
 			public void handle(ActionEvent e) {
 				clientInfo = new BaccaratInfo();
 				RadioButton selected = (RadioButton) choiceButtons.getSelectedToggle();
 				clientInfo.betOnWho = selected.getText();
 				clientInfo.currentBet = Integer.parseInt(betAmount.getText());
-				clientInfo = clientConnection.clientInfo; //??????
-				//clientConnection.send(clientInfo);
+				clientConnection.send(clientInfo);
 			}
 		};
 
+		betButton.setOnAction(gameHandler);
 		return gameScene;
 	}
 
